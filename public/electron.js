@@ -8,14 +8,17 @@ let win;
 function createWindow () {  
 win = new BrowserWindow({width: 800, height: 600})
 win.setMenu(null)
-//win.loadURL(`file://${path.join(__dirname, '../build/index.html')}`)
-win.loadURL('http://localhost:3000/')
+const url = `file://${path.join(__dirname, '../build/index.html')}`
+console.log(url)
+// win.loadURL(url)
+  win.loadURL('http://localhost:3000/')
 
 win.on('close', (e) => {
         if (app.showExitPrompt) {
             e.preventDefault()
             dialog.showMessageBox({
                 type: 'question',
+                defaultId: 2,
                 buttons: ['Yes', 'No'],
                 title: 'Confirm',
                 message: 'Are you sure you want to quit?'

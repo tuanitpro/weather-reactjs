@@ -4,12 +4,7 @@ import React, {
 from 'react';
 
 class Forecast extends Component {
-    constructor(props) {
-        super(props);
-
-         
-    }
-     
+    
     render (){
         const dataForecast = this.props.dataForecast;
       
