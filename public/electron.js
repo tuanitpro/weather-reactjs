@@ -1,19 +1,49 @@
-const {app, BrowserWindow, dialog, shell} = require('electron')
+const { app, BrowserWindow, dialog, shell } = require('electron')
 const path = require("path");
 
 app.showExitPrompt = true
 
 let win;
+let loading;
+function createLoading() {
+    loading = new BrowserWindow({
+        width: 500, height: 300, parent: null,
+      
+        icon: path.join(__dirname, '../build/logo.png'),
+        modal: true, 
+        webPreferences: {
+            nodeIntegration: true,
+            webSecurity: false
+        }
+    })
 
-function createWindow () {  
-win = new BrowserWindow({width: 800, height: 600})
-win.setMenu(null)
-const url = `file://${path.join(__dirname, '../build/index.html')}`
-console.log(url)
-// win.loadURL(url)
-  win.loadURL('http://localhost:3000/')
+    loading.setMenu(null);
+    const url = `file://${path.join(__dirname, '../build/loading.html')}`
+    loading.loadURL(url)
+    // loading.webContents.openDevTools()
 
-win.on('close', (e) => {
+    loading.on('close', (e) => {
+        createWindow();
+    })
+}
+
+function createWindow() {
+    win = new BrowserWindow({
+        width: 800, height: 600, parent: null,
+        icon: path.join(__dirname, '../build/logo.png'),
+        modal: true, webPreferences: {
+            nodeIntegration: true
+        }
+    })
+
+    win.setMenu(null)
+    // win.webContents.openDevTools()
+
+    const url = `file://${path.join(__dirname, '../build/index.html')}`    
+    win.loadURL(url)
+    // win.loadURL('http://localhost:3000/')
+
+    win.on('close', (e) => {
         if (app.showExitPrompt) {
             e.preventDefault()
             dialog.showMessageBox({
@@ -26,7 +56,8 @@ win.on('close', (e) => {
                 if (response === 0) {
                     app.showExitPrompt = false
 
-                    // shell.openExternal('notepad.exe')
+                    //  shell.openExternal('notepad.exe')
+
                     win.close()
                 }
             })
@@ -34,17 +65,24 @@ win.on('close', (e) => {
     })
 }
 
-app.on('ready', createWindow);
+app.on('ready', () => {
+        createLoading();
+        setTimeout(()=>{
+            loading.close();
+            loading=null;
+    }, 5000)
+
+});
 
 app.on("window-all-closed", () => {
     if (process.platform !== "darwin") {
         app.quit();
     }
-  });
+});
 
 app.on("activate", () => {
-if (win === null) {    
-    createWindow();
-}
+    if (win === null) {
+        createWindow();
+    }
 
 });
